@@ -1,11 +1,14 @@
 import unittest
 
 import numpy as np
+from matplotlib import pyplot as plt
 from numpy.linalg import det
 
+from plot.plotter import Plotter
 from utils import mymath
 from utils.circle import Circle, random_circle
-from utils.mymath import moebius_on_point, plot_function, moebius_on_circle
+from utils.function import Function
+from utils.mymath import moebius_on_point, moebius_on_circle
 
 
 class mymath_test(unittest.TestCase):
@@ -41,28 +44,27 @@ class mymath_test(unittest.TestCase):
         self.assertAlmostEqual(moebius_on_point(m,z),m[0][0]/m[1][0])
 
     def test_plot(self):
-        plot_function(lambda x:x**2,-2,2,100)
+        parabola = Function(lambda x:x**2,-2,2,100)
+        Plotter.plot(parabola)
 
     def test_circle(self):
         circle = Circle(1+1j,1)
-        circle.visualize()
-
+        Plotter.plot(circle)
 
     def test_moebius_on_circle(self):
         """
         :return:
         """
-
         # random moebius transformation
         m = np.array([[1, 0], [0, 1]])
-        for i in range(0, 1000):
-            for r in range(0, 2):
-                for c in range(0, 2):
-                    m[r][c] = 5 - np.random.random() * 10
+
+        for r in range(0, 2):
+            for c in range(0, 2):
+                m[r][c] = 3 - np.random.random() * 6
 
         # random circle
+        circles=[random_circle()]
 
-        circle = random_circle()
-        circle.visualize()
-        circle2 = moebius_on_circle(m,circle)
-        circle2.visualize()
+        for i in range(100):
+            circles.append(moebius_on_circle(m,circles[-1]))
+        Plotter.plot(*circles)

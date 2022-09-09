@@ -35,11 +35,5 @@ def moebius_on_point(m,z):
 def moebius_on_circle(m,circle):
     z = circle.c-circle.r**2/np.conj(m[1][1]/m[1][0]+circle.c)
     cen = moebius_on_point(m,z)
-    rad = np.abs(cen-moebius_on_point(m,circle.c+c.r))
+    rad = np.abs(cen-moebius_on_point(m,circle.c+circle.r))
     return Circle(cen,rad)
-
-def plot_function(fcn,x_min,x_max,resolution):
-    x = np.linspace(start=x_min,stop=x_max,num=resolution)
-    y = fcn(x)
-    plt.plot(x,y)
-    plt.show()
