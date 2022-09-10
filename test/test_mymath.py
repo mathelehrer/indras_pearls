@@ -19,7 +19,7 @@ class mymath_test(unittest.TestCase):
         """
         for i in range(0,1000):
             z = (5-np.random.random()*10)+1j*(5-np.random.random()*10)
-            root = mymath.cxsqrt(z)
+            root = mymath.cx_sqrt(z)
             self.assertAlmostEqual(z,root*root)
 
     def test_moebius_on_point(self):

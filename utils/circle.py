@@ -5,6 +5,8 @@ from plot.plotter import PlotObject
 class Circle(PlotObject):
     """
     This class is a container for a circle, which is a geometric object in the complex plane
+    :param center:
+    :param radius:
     """
     def __init__(self, center, radius):
         """
