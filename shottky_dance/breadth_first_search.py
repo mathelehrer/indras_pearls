@@ -5,13 +5,14 @@ from utils.mymath import moebius_on_circle
 
 
 class BreadFirstSearch:
-    def __init__(self, theta=np.pi / 4, level_max=3):
+    def __init__(self, theta=np.pi / 4, level_max=4):
         self.level_max=level_max
         self.gens = []
         self.group = []
         self.circles = []
         self.level = 0
         self.tags = []
+        self.cols=[]
         self.inv = []
         self.num = []
         self.a = None
@@ -69,10 +70,12 @@ class BreadFirstSearch:
 
     def output(self):
         circles = [*self.circles]
+        self.cols = ['y', 'b', 'r', 'g']
         for i in range(0, self.num[self.level_max-1]):
             for j in range(0, 4):
                 if self.inv[self.tags[i]] != j:
                     circles.append(moebius_on_circle(self.group[i], self.circles[j]))
+                    self.cols.append(self.cols[j])
         return circles
 
 
