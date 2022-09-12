@@ -56,6 +56,8 @@ class BreadFirstSearch:
         self.circles.append(Circle(-i * center, radius))
         self.circles.append(Circle(-center, radius))
 
+        # print("Created " + len(self.circles) + " circles:")
+        # [print("C[(", c.c, "),", c.r, "]") for c in self.circles]
 
     def generate_levels(self):
         for level in range(1, self.level_max):
