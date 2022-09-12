@@ -12,9 +12,10 @@ from utils.circle import Circle, random_circle
 from utils.function import Function
 from utils.mymath import moebius_on_point, moebius_on_circle
 
+
 class breadth_first_search_test(unittest.TestCase):
     def test_initialize(self):
-        bfs = BreadFirstSearch(theta=np.pi/4,level_max=7)
+        bfs = BreadFirstSearch(theta=np.pi/4,level_max=5)
         identity = np.eye(2)
         self.assertTrue(np.allclose(np.dot(bfs.a,bfs.A),identity))
         self.assertTrue(np.allclose(np.dot(bfs.b,bfs.B),identity))
