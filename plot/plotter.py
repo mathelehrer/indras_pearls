@@ -16,8 +16,14 @@ class Plotter:
             if colors:
                 if len(colors) > i:
                     col = colors[i]
+                else:
+                    col = colors[-1]
 
             x, y = plot_object.visualize()
             plt.plot(x, y, col)
         plt.gca().set_aspect('equal')
         plt.show()
+
+
+
+

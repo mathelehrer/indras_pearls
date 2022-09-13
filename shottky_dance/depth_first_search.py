@@ -2,15 +2,19 @@ import numpy as np
 
 from utils.circle import Circle
 from utils.mymath import moebius_on_circle, moebius_on_point
-from utils.strings import tab_strings
+from utils.strings import tab_strings, underscore_strings
 
 
 class DepthFirstSearch:
     def __init__(self, theta=np.pi / 4, level_max=4):
+        self.level = None
+        self.word = []
+        self.tags = []
         self.level_max = level_max
         self.labels = ['a', 'b', 'A', 'B']
         self.gens = []
         self.circles = []
+        self.circs = []
         self.inv = []
         self.num = []
         self.fixed_points = [1, -1, 1j, -1j]
@@ -21,14 +25,7 @@ class DepthFirstSearch:
         self.points = []
         self.initialize(theta=theta)
 
-        # do the first step into the tree
-        self.level = 0
-        self.word = [self.gens[0]]
-        self.tags = [0]
-        print("tags: ", self.tags)
-        print("word: ", self.word, " at level ", self.level)
-
-        self.epsilon = 0.0001
+        self.epsilon = 0.000001
 
     def initialize(self, theta=np.pi / 4):
         i = 1j
@@ -65,14 +62,26 @@ class DepthFirstSearch:
         print("Finished initialization")
 
     def search(self):
-        nextTurn = None
-        while self.level >= 0 or self.tags[0] < 3:
-            while self.go_forward(nextTurn):
-                # go deep down the tree until the max level is reached or the circle is smaller than the resolution
-                nextTurn = None  # step down the tree with autopilot, the generators are cycled down cyclically.
-                # When the node was entered with 'a', the order of turns is 'B', 'a', 'b'.
-                # When the node was entered with 'b', the order of turns is 'a', 'b', 'A'.
-            nextTurn = self.go_backward_until_turn_available()  # step down the tree after turn
+
+        if self.level_max==0:
+            # nothing to do, no new fixedpoints generated
+            self.circs=self.circles
+            self.points=self.fixed_points
+        else:
+            for i in range(4):
+                # do the first step into the tree
+                self.level = 0
+                self.word = [self.gens[i]]
+                self.tags = [i]
+                # self.output()
+                nextTurn = None
+                while self.level >= 0:
+                    while self.go_forward(nextTurn):
+                        # go deep down the tree until the max level is reached or the circle is smaller than the resolution
+                        nextTurn = None  # step down the tree with autopilot, the generators are cycled down cyclically.
+                        # When the node was entered with 'a', the order of turns is 'B', 'a', 'b'.
+                        # When the node was entered with 'b', the order of turns is 'a', 'b', 'A'.
+                    nextTurn = self.go_backward_until_turn_available()  # step down the tree after turn
 
     def go_forward(self, gen=None):
         self.level += 1
@@ -81,7 +90,7 @@ class DepthFirstSearch:
         else:
             self.tags.append(gen)  # directed forward after turn
         self.word.append(np.dot(self.word[-1], self.gens[self.tags[-1]]))
-        self.output()
+        # self.output()
         # print("word: ", self.word, " at level ", self.level)
         return not self.branch_termination()
 
@@ -90,6 +99,7 @@ class DepthFirstSearch:
             self.tags[self.level]])  # the value of the level fits the position of the word and tag in the array
         if self.level == self.level_max or new_circle.r < self.epsilon:
             self.points.append(moebius_on_point(self.word[self.level], self.fixed_points[self.tags[self.level]]))
+            self.circs.append(new_circle)
             # print("terminated: ", new_circle.r, self.level)
             return True
         else:
@@ -108,4 +118,4 @@ class DepthFirstSearch:
                 self.word.pop()
 
     def output(self):
-        print(tab_strings(self.level),self.labels[self.tags[-1]])
+        print(underscore_strings(self.level), self.labels[self.tags[-1]])

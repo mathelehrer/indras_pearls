@@ -2,16 +2,25 @@ import unittest
 
 import numpy as np
 from matplotlib import pyplot as plt
-from numpy import eye
-from numpy.linalg import det
 
-from plot.plotter import Plotter
-from shottky_dance.breadth_first_search import BreadFirstSearch
 from shottky_dance.depth_first_search import DepthFirstSearch
-from utils import mymath
-from utils.circle import Circle, random_circle
-from utils.function import Function
-from utils.mymath import moebius_on_point, moebius_on_circle
+
+
+
+def get_index_or_last(i,list):
+    if len(list)>i:
+        return list[i]
+    else:
+        return list[-1]
+
+
+def plot_lists(lists, colors=['r', 'r']):
+    for i,list in enumerate(lists):
+        for l in list:
+            x,y=l.visualize()
+            plt.plot(x,y,get_index_or_last(i,colors))
+    plt.gca().set_aspect('equal')
+    plt.show()
 
 
 class depth_first_search_test(unittest.TestCase):
@@ -23,6 +32,16 @@ class depth_first_search_test(unittest.TestCase):
         # check inverses a = A**(-1)
         # check inverses b = B**(-1)
         [self.assertTrue(np.allclose(np.dot(dfs.gens[i],dfs.gens[dfs.inv[i]]),identity)) for i in range(0,4)]
-        # check go_forward and turn
-        dfs.search()
+
+    def test_circles_at_levels(self):
+        circles_at_levels=[]
+        for level_max in range(0,5):
+            dfs = DepthFirstSearch(theta=np.pi/4,level_max=level_max)
+            dfs.search()
+
+            circles_at_levels.append(dfs.circs)
+
+        colors=['r','g','b','y','m']
+        plot_lists(circles_at_levels,colors)
+
 
