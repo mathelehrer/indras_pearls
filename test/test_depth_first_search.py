@@ -25,3 +25,4 @@ class depth_first_search_test(unittest.TestCase):
         [self.assertTrue(np.allclose(np.dot(dfs.gens[i],dfs.gens[dfs.inv[i]]),identity)) for i in range(0,4)]
         # check go_forward and turn
         dfs.search()
+
