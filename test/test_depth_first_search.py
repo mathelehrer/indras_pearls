@@ -35,7 +35,7 @@ class depth_first_search_test(unittest.TestCase):
 
     def test_circles_at_levels(self):
         circles_at_levels=[]
-        for level_max in range(0,5):
+        for level_max in range(-1,5):
             dfs = DepthFirstSearch(theta=np.pi/4,level_max=level_max)
             dfs.search()
 

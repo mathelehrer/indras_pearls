@@ -63,19 +63,23 @@ class DepthFirstSearch:
 
     def search(self):
 
-        if self.level_max==0:
+        if self.level_max==-1:
             # nothing to do, no new fixedpoints generated
             self.circs=self.circles
             self.points=self.fixed_points
         else:
             for i in range(4):
                 # do the first step into the tree
-                self.level = 0
-                self.word = [self.gens[i]]
-                self.tags = [i]
-                # self.output()
-                nextTurn = None
-                while self.level >= 0:
+                # self.level = 0
+                # self.word = [self.gens[i]]
+                # self.tags = [i]
+                # # self.output()
+                self.level=-1
+                first=True
+                while first or self.level >= 0:
+                    if first:
+                        first=False
+                        nextTurn=i
                     while self.go_forward(nextTurn):
                         # go deep down the tree until the max level is reached or the circle is smaller than the resolution
                         nextTurn = None  # step down the tree with autopilot, the generators are cycled down cyclically.
@@ -89,8 +93,11 @@ class DepthFirstSearch:
             self.tags.append((self.tags[-1] + 3) % 4)  # automatic forward
         else:
             self.tags.append(gen)  # directed forward after turn
-        self.word.append(np.dot(self.word[-1], self.gens[self.tags[-1]]))
-        # self.output()
+        if len(self.word)>0:
+            self.word.append(np.dot(self.word[-1], self.gens[self.tags[-1]]))
+        else:
+            self.word.append(self.gens[self.tags[-1]])
+        self.output()
         # print("word: ", self.word, " at level ", self.level)
         return not self.branch_termination()
 
