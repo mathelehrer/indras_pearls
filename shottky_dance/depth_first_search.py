@@ -6,18 +6,20 @@ from utils.strings import tab_strings, underscore_strings
 
 
 class DepthFirstSearch:
-    def __init__(self, theta=np.pi / 4, level_max=4):
+    def __init__(self, theta=np.pi / 4, level_max=4,eps=0.001):
         self.level = None
         self.word = []
         self.tags = []
         self.level_max = level_max
         self.labels = ['a', 'b', 'A', 'B']
+        self.colors = ['r','g','b','y']
         self.gens = []
         self.circles = []
         self.circs = []
+        self.cols =[]
         self.inv = []
         self.num = []
-        self.fixed_points = [1, -1, 1j, -1j]
+        self.fixed_points = [1j, 1,-1j, -1]
         self.a = None
         self.A = None
         self.b = None
@@ -25,7 +27,7 @@ class DepthFirstSearch:
         self.points = []
         self.initialize(theta=theta)
 
-        self.epsilon = 0.000001
+        self.epsilon = eps
 
     def initialize(self, theta=np.pi / 4):
         i = 1j
@@ -61,12 +63,37 @@ class DepthFirstSearch:
         [print(self.labels[i], ": ", self.fixed_points[i]) for i in range(0, 4)]
         print("Finished initialization")
 
-    def search(self):
+    def recursive_search(self):
+        id = np.eye(2)
+        for k in range(0, 4):
+            self.circs.append(self.circles[k])
+            self.cols.append(self.colors[k])
+            self.explore_tree(id,k) # start with the identity matrix
 
-        if self.level_max==-1:
+    def explore_tree(self, gen, k):
+        for i in range(0,3):
+            index = (k + 3 + i) % 4
+            local_gen = np.dot(gen, self.gens[index])
+            termination = True
+
+            for j, circle in enumerate(self.circles):
+                if j != index:
+                    new_circle = moebius_on_circle(local_gen, circle)
+                    self.circs.append(new_circle)
+                    self.cols.append(self.colors[j])
+                    if new_circle.r < self.epsilon:
+                        self.points.append(
+                            moebius_on_point(local_gen, self.fixed_points[index]))
+                    else:
+                        termination = False
+            if not termination:
+                self.explore_tree(local_gen, index)
+
+    def search(self):
+        if self.level_max == -1:
             # nothing to do, no new fixedpoints generated
-            self.circs=self.circles
-            self.points=self.fixed_points
+            self.circs = self.circles
+            self.points = self.fixed_points
         else:
             for i in range(4):
                 # do the first step into the tree
@@ -74,12 +101,12 @@ class DepthFirstSearch:
                 # self.word = [self.gens[i]]
                 # self.tags = [i]
                 # # self.output()
-                self.level=-1
-                first=True
+                self.level = -1
+                first = True
                 while first or self.level >= 0:
                     if first:
-                        first=False
-                        nextTurn=i
+                        first = False
+                        nextTurn = i
                     while self.go_forward(nextTurn):
                         # go deep down the tree until the max level is reached or the circle is smaller than the resolution
                         nextTurn = None  # step down the tree with autopilot, the generators are cycled down cyclically.
@@ -93,7 +120,7 @@ class DepthFirstSearch:
             self.tags.append((self.tags[-1] + 3) % 4)  # automatic forward
         else:
             self.tags.append(gen)  # directed forward after turn
-        if len(self.word)>0:
+        if len(self.word) > 0:
             self.word.append(np.dot(self.word[-1], self.gens[self.tags[-1]]))
         else:
             self.word.append(self.gens[self.tags[-1]])

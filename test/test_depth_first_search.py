@@ -3,8 +3,8 @@ import unittest
 import numpy as np
 from matplotlib import pyplot as plt
 
+from plot.plotter import Plotter
 from shottky_dance.depth_first_search import DepthFirstSearch
-
 
 
 def get_index_or_last(i,list):
@@ -44,4 +44,8 @@ class depth_first_search_test(unittest.TestCase):
         colors=['r','g','b','y','m']
         plot_lists(circles_at_levels,colors)
 
+    def test_recursive_search(self):
+        dfs = DepthFirstSearch(theta=np.pi/4,eps=0.1)
+        dfs.recursive_search()
+        Plotter.plot(*dfs.circs,colors=dfs.cols)
 
