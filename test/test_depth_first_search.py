@@ -1,5 +1,6 @@
 import unittest
 
+import matplotlib
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -45,7 +46,14 @@ class depth_first_search_test(unittest.TestCase):
         plot_lists(circles_at_levels,colors)
 
     def test_recursive_search(self):
-        dfs = DepthFirstSearch(theta=np.pi/4,eps=0.1)
+        dfs = DepthFirstSearch(theta=np.pi/4,eps=0.125)
         dfs.recursive_search()
         Plotter.plot(*dfs.circs,colors=dfs.cols)
+
+    def test_recursive_search_limit(self):
+        dfs = DepthFirstSearch(theta=np.pi/4,eps=0.05)
+        dfs.recursive_search()
+        plt.scatter(np.real(dfs.points),np.imag(dfs.points),s=0.5,marker='.')
+        plt.gca().set_aspect('equal')
+        plt.show()
 

@@ -6,20 +6,20 @@ from utils.strings import tab_strings, underscore_strings
 
 
 class DepthFirstSearch:
-    def __init__(self, theta=np.pi / 4, level_max=4,eps=0.001):
+    def __init__(self, theta=np.pi / 4, level_max=4, eps=0.001):
         self.level = None
         self.word = []
         self.tags = []
         self.level_max = level_max
         self.labels = ['a', 'b', 'A', 'B']
-        self.colors = ['r','g','b','y']
+        self.colors = ['r', 'b', 'g', 'y']
         self.gens = []
         self.circles = []
         self.circs = []
-        self.cols =[]
+        self.cols = []
         self.inv = []
         self.num = []
-        self.fixed_points = [1j, 1,-1j, -1]
+        self.fixed_points = [1j, 1, -1j, -1]
         self.a = None
         self.A = None
         self.b = None
@@ -68,26 +68,24 @@ class DepthFirstSearch:
         for k in range(0, 4):
             self.circs.append(self.circles[k])
             self.cols.append(self.colors[k])
-            self.explore_tree(id,k) # start with the identity matrix
+            self.explore_tree(id, k)  # start with the identity matrix
 
     def explore_tree(self, gen, k):
-        for i in range(0,3):
+        for i in range(0, 3):
             index = (k + 3 + i) % 4
-            local_gen = np.dot(gen, self.gens[index])
-            termination = True
+            local_gen = np.dot(gen,self.gens[index]) # change the order in comparison to the book to have the circles coloured properly. For the limit set this is irrelevant
 
-            for j, circle in enumerate(self.circles):
-                if j != index:
-                    new_circle = moebius_on_circle(local_gen, circle)
-                    self.circs.append(new_circle)
-                    self.cols.append(self.colors[j])
-                    if new_circle.r < self.epsilon:
-                        self.points.append(
-                            moebius_on_point(local_gen, self.fixed_points[index]))
-                    else:
-                        termination = False
-            if not termination:
-                self.explore_tree(local_gen, index)
+            for j in range(0, 3):
+                i2 = (k + 3 + j) % 4
+                circle = self.circles[i2]
+                new_circle = moebius_on_circle(local_gen, circle)
+                self.circs.append(new_circle)
+                self.cols.append(self.colors[i2])
+                # print(new_circle.r)
+                if new_circle.r < self.epsilon:
+                    self.points.append(moebius_on_point(local_gen, self.fixed_points[index]))
+                else:
+                    self.explore_tree(local_gen, index)
 
     def search(self):
         if self.level_max == -1:
