@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from plot.plotter import Plotter
-from shottky_dance.depth_first_search import DepthFirstSearch
+from shottky_dance.depth_first_search import DepthFirstSearch, DepthFirstSearch2
 
 
 def get_index_or_last(i,list):
@@ -57,3 +57,14 @@ class depth_first_search_test(unittest.TestCase):
         plt.gca().set_aspect('equal')
         plt.show()
 
+    def test_recursive_search2(self):
+        dfs = DepthFirstSearch2(y=1,k=0.5,eps=0.1)
+        dfs.recursive_search()
+        Plotter.plot(*dfs.circs,colors=dfs.cols)
+
+    def test_recursive_search_limit2(self):
+        dfs = DepthFirstSearch2(y=1,k=0.05,eps=0.015)
+        dfs.recursive_search()
+        plt.scatter(np.real(dfs.points),np.imag(dfs.points),s=0.5,marker='.')
+        plt.gca().set_aspect('equal')
+        plt.show()

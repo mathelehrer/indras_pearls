@@ -5,6 +5,92 @@ from utils.mymath import moebius_on_circle, moebius_on_point
 from utils.strings import tab_strings, underscore_strings
 
 
+class DepthFirstSearch2:
+    def __init__(self, y=1,k=1,eps=0.1):
+        self.labels = ['a', 'b', 'A', 'B']
+        self.colors = ['r', 'b', 'g', 'y']
+        self.gens = []
+        self.circles = []
+        self.circs = []
+        self.cols = []
+        self.inv = []
+        self.num = []
+        self.fixed_points = [1j, 1, -1j, -1]
+        self.a = None
+        self.A = None
+        self.b = None
+        self.B = None
+        self.points = []
+        self.initialize(y=y,k=k)
+        self.epsilon = eps
+
+    def initialize(self,y=1,k=1):
+        i = 1j
+        x=np.sqrt(1+y*y)
+        v=2/(k+1/k)
+        u=np.sqrt(1+v*v)
+
+        self.gens.append([[u,i*k*v],[-i*v/k,u]])
+        self.a = self.gens[0]
+        self.gens.append([[x, y], [y, x]])
+        self.b = self.gens[1]
+        self.gens.append(np.linalg.inv(self.a))
+        self.A = self.gens[2]
+        self.gens.append(np.linalg.inv(self.b))
+        self.B = self.gens[3]
+        self.inv.append(2)
+        self.inv.append(3)
+        self.inv.append(0)
+        self.inv.append(1)
+        [print(self.labels[i], self.gens[i]) for i in range(0, 4)]
+        print("inverses: ", self.inv)
+
+        # setup initial circles
+        c_a = i*k*u/v
+        c_A=-c_a
+        r_a=k/v
+
+        c_b = x/y
+        c_B = -c_b
+        r_b = 1/y
+
+        self.circles.append(Circle(c_a, r_a))
+        self.circles.append(Circle(c_b, r_b))
+        self.circles.append(Circle(c_A, r_a))
+        self.circles.append(Circle(c_B, r_b))
+
+        print("Created ", len(self.circles), " circles:")
+        [print("C[(", c.c, "),", c.r, "]") for c in self.circles]
+
+        print("Fixed points:")
+        [print(self.labels[i], ": ", self.fixed_points[i]) for i in range(0, 4)]
+        print("Finished initialization")
+
+    def recursive_search(self):
+        id = np.eye(2)
+        for k in range(0, 4):
+            self.circs.append(self.circles[k])
+            self.cols.append(self.colors[k])
+            self.explore_tree(id, k)  # start with the identity matrix
+
+    def explore_tree(self, gen, k):
+        for i in range(0, 3):
+            index = (k + 3 + i) % 4
+            local_gen = np.dot(gen, self.gens[
+                index])  # change the order in comparison to the book to have the circles coloured properly. For the limit set this is irrelevant
+
+            for j in range(0, 3):
+                i2 = (k + 3 + j) % 4
+                circle = self.circles[i2]
+                new_circle = moebius_on_circle(local_gen, circle)
+                self.circs.append(new_circle)
+                self.cols.append(self.colors[i2])
+                # print(new_circle.r)
+                if new_circle.r < self.epsilon:
+                    self.points.append(moebius_on_point(local_gen, self.fixed_points[index]))
+                else:
+                    self.explore_tree(local_gen, index)
+
 class DepthFirstSearch:
     def __init__(self, theta=np.pi / 4, level_max=4, eps=0.001):
         self.level = None
