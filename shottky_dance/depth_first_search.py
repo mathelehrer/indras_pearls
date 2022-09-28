@@ -15,7 +15,7 @@ class DepthFirstSearch2:
         self.cols = []
         self.inv = []
         self.num = []
-        self.fixed_points = [1j, 1, -1j, -1]
+        self.fixed_points = [1j*k, 1, -1j*k, -1]
         self.a = None
         self.A = None
         self.b = None
@@ -159,7 +159,8 @@ class DepthFirstSearch:
     def explore_tree(self, gen, k):
         for i in range(0, 3):
             index = (k + 3 + i) % 4
-            local_gen = np.dot(gen,self.gens[index]) # change the order in comparison to the book to have the circles coloured properly. For the limit set this is irrelevant
+            local_gen = np.dot(gen,self.gens[index]) # change the order in comparison to the book to have the circles
+            # coloured properly. For the limit set this is irrelevant
 
             for j in range(0, 3):
                 i2 = (k + 3 + j) % 4

@@ -8,7 +8,7 @@ class Circle(PlotObject):
     :param center:
     :param radius:
     """
-    def __init__(self, center, radius):
+    def __init__(self, center, radius,p1=None,p2=None):
         """
         defines a circle in the complex plane
         :param center:
@@ -16,10 +16,18 @@ class Circle(PlotObject):
         """
         self.r = radius
         self.c = center
+        self.p1 = p1
+        self.p2 = p2
 
     def visualize(self):
         phi = np.linspace(start=0,stop=np.pi*2,num=100)
-        z = np.cos(phi)*self.r+1j*np.sin(phi)*self.r+self.c
+        if self.r<np.inf:
+            # if it's a circle
+            z = np.cos(phi)*self.r+1j*np.sin(phi)*self.r+self.c
+        else:
+            # if it's a line
+            x = -1+phi/np.pi
+            z = self.p1+(self.p2-self.p1)*x
         return np.real(z),np.imag(z)
 
     def area(self):

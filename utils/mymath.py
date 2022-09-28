@@ -1,5 +1,11 @@
+import math
+
 import numpy as np
 from utils.circle import Circle
+
+
+def flatten(matrix):
+    return [v for row in matrix for v in row]
 
 
 def cx_sqrt(z):
@@ -32,7 +38,37 @@ def moebius_on_point(m, z):
 
 
 def moebius_on_circle(m, circle):
-    z = circle.c - circle.r ** 2 / np.conj(m[1][1] / m[1][0] + circle.c)
-    cen = moebius_on_point(m, z)
-    rad = np.abs(cen - moebius_on_point(m, circle.c + circle.r))
-    return Circle(cen, rad)
+    if circle.c==np.inf:
+        # convert line to circle
+        return circle_from_three_points(
+            moebius_on_point(m,circle.p1),
+            moebius_on_point(m,circle.p2),
+            moebius_on_point(m,np.inf),
+        )
+    else:
+        denominator = np.conj(m[1][1] / m[1][0] + circle.c)
+        if np.abs(denominator)!=0:
+            z = circle.c - circle.r ** 2 / denominator
+            if np.abs(m[1][0] * z + m[1][1]) != 0:
+                cen = moebius_on_point(m, z)
+                rad = np.abs(cen - moebius_on_point(m, circle.c + circle.r))
+                return Circle(cen, rad)
+            else:
+                return Circle(np.inf, np.inf, p1=moebius_on_point(m, circle.c + circle.r),
+                              p2=moebius_on_point(m, circle.c + 1j * circle.r))
+        else:
+            cen = m[0][0]/m[1][0]
+            rad = np.abs(cen - moebius_on_point(m, circle.c + circle.r))
+            return Circle(cen,rad)
+
+
+def circle_from_three_points(x,y,z)->Circle:
+    w = (z-x)/(y-x)
+    if np.isclose(np.imag(w),0):
+        # circle is a line
+        return Circle(np.inf,np.inf,x,y)
+    else:
+        c = (y-x)*(w-np.conj(w)*w)/(2j*w.imag)+x
+        r = np.abs(x-c)
+        return Circle(c,r)
+
