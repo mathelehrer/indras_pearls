@@ -141,8 +141,8 @@ class DepthFirstSearchOriginal:
         self.breaking_length = None
 
     def setup_start(self,
-                    begin_tag=[0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3],
-                    end_tag=[1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2]):
+                    begin_tag=[0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3],
+                    end_tag=[1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3 , 1, 0, 3, 2]):
         '''
         This function can be called before run() to setup the begin_tag and end_tag
         :param begin_tag: [0,0,0,1,2]
